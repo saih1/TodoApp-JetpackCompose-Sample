@@ -3,7 +3,7 @@ package com.example.todojetpackcomposemvvm.ui.viewmodels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.todojetpackcomposemvvm.data.models.ToDoTask
-import com.example.todojetpackcomposemvvm.data.repositories.TdoRepository
+import com.example.todojetpackcomposemvvm.data.repositories.TodoRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -13,7 +13,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SharedViewModel @Inject constructor(
-    private val repository: TdoRepository
+    private val repository: TodoRepository
 ) : ViewModel() {
     private val _allTasks = MutableStateFlow<List<ToDoTask>>(emptyList())
 
