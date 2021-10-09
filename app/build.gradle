@@ -6,12 +6,12 @@ plugins {
 }
 
 android {
-    compileSdk 30
+    compileSdk 31
 
     defaultConfig {
         applicationId "com.example.todojetpackcomposemvvm"
         minSdk 30
-        targetSdk 30
+        targetSdk 31
         versionCode 1
         versionName "1.0"
 
@@ -65,8 +65,16 @@ dependencies {
     debugImplementation "androidx.compose.ui:ui-tooling:$compose_version"
 
     // Hilt
-    implementation "com.google.dagger:hilt-android:$hiltVersion"
-    kapt "com.google.dagger:hilt-android-compiler:$hiltVersion"
+    implementation 'com.google.dagger:hilt-android:2.39.1'
+    kapt 'com.google.dagger:hilt-compiler:2.39.1'
+
+    // Hilt - For instrumentation tests
+    androidTestImplementation  'com.google.dagger:hilt-android-testing:2.39.1'
+    kaptAndroidTest 'com.google.dagger:hilt-compiler:2.39.1'
+
+    // Hilt - For local unit tests
+    testImplementation 'com.google.dagger:hilt-android-testing:2.39.1'
+    kaptTest 'com.google.dagger:hilt-compiler:2.39.1'
 
     // Room
     implementation "androidx.room:room-runtime:$roomVersion"

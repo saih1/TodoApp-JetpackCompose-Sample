@@ -4,6 +4,7 @@ import androidx.room.*
 import com.example.todojetpackcomposemvvm.data.models.ToDoTask
 import kotlinx.coroutines.flow.Flow
 
+// Injected in ToDoRepository Class
 @Dao
 interface ToDoDao {
     @Query("SELECT * FROM todo_table ORDER BY id ASC")

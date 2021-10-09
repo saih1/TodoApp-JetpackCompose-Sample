@@ -12,13 +12,9 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class SharedViewModel @Inject constructor(
-    private val repository: TodoRepository
-) : ViewModel() {
+class SharedViewModel @Inject constructor(private val repository: TodoRepository) : ViewModel() {
     private val _allTasks = MutableStateFlow<List<ToDoTask>>(emptyList())
-
     val allTasks: StateFlow<List<ToDoTask>> = _allTasks
-
     fun getAllTasks() {
         viewModelScope.launch {
             repository.getAllTasks.collect {
