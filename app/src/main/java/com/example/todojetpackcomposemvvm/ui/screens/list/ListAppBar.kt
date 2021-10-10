@@ -1,11 +1,18 @@
 package com.example.todojetpackcomposemvvm.ui.screens.list
 
+import android.content.Context
 import android.content.res.Resources
+import android.widget.Toast
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.FiniteAnimationSpec
+import androidx.compose.animation.expandHorizontally
+import androidx.compose.animation.expandVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -23,13 +30,16 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.layout.MeasureScope
 import androidx.compose.ui.layout.layout
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
 import com.example.todojetpackcomposemvvm.components.PriorityItem
 import com.example.todojetpackcomposemvvm.ui.theme.*
+import kotlinx.coroutines.withContext
 
 @Composable
 // MAIN
@@ -50,8 +60,15 @@ fun DefaultListAppBar(
 ) {
     TopAppBar(
         title = {
+            Icon(
+                imageVector = Icons.Filled.Star,
+                contentDescription = "Star",
+                tint = MaterialTheme.colors.topAppBarContentColor,
+                modifier = Modifier.padding(horizontal = 2.dp, vertical = 3.dp)
+            )
             Text(
-                text = "Tasks", color = MaterialTheme.colors.topAppBarContentColor
+                text = "Tasks",
+                color = MaterialTheme.colors.topAppBarContentColor
             )
         },
         backgroundColor = MaterialTheme.colors.topAppBarBackgroundColor,
@@ -74,9 +91,11 @@ fun ListAppBarActions(
 ) {
     // 3 different actions
     // Order matters
-    SearchAction(onSearchClicked = onSearchClicked)
-    SortAction(onSortClicked = onSortClicked)
-    DeleteAllAction(onDeleteClicked = onDeleteClicked)
+    Row {
+        SearchAction(onSearchClicked = onSearchClicked)
+        SortAction(onSortClicked = onSortClicked)
+        DeleteAllAction(onDeleteClicked = onDeleteClicked)
+    }
 }
 
 @Composable
