@@ -25,6 +25,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
@@ -44,10 +45,16 @@ import kotlinx.coroutines.withContext
 @Composable
 // MAIN
 fun ListAppBar() {
-    DefaultListAppBar(
-        onSearchClicked = {},
-        onSortClicked = {},
-        onDeleteClicked = {}
+//    DefaultListAppBar(
+//        onSearchClicked = {},
+//        onSortClicked = {},
+//        onDeleteClicked = {}
+//    )
+    SearchAppBar(
+            text = "",
+            onTextChange = {},
+            onCloseClicked = {},
+            onSearchClicked = {}
     )
 }
 
@@ -188,6 +195,55 @@ fun DeleteAllAction(onDeleteClicked: () -> Unit) {
     }
 }
 
+// MAIN SEARCH APP BAR
+@Composable
+fun SearchAppBar(
+        text: String,
+        onTextChange: (String) -> Unit,
+        onCloseClicked: () -> Unit,
+        onSearchClicked: () -> Unit,
+) {
+    Surface(modifier = Modifier
+            .fillMaxWidth()
+            .height(TOP_APP_BAR_HEIGHT),
+            elevation = AppBarDefaults.TopAppBarElevation,
+            color = MaterialTheme.colors.topAppBarBackgroundColor
+    ) {
+        TextField(
+                value = text,
+                onValueChange = {onTextChange(it)},
+                modifier = Modifier
+                        .fillMaxWidth(),
+                placeholder = {
+                    Text(
+                            modifier = Modifier
+                                    .alpha(ContentAlpha.medium),
+                            text = "Search",
+                            color = Color.White
+                    )
+                },
+                textStyle = TextStyle(
+                        color = MaterialTheme.colors.topAppBarContentColor,
+                        fontSize = MaterialTheme.typography.subtitle1.fontSize
+                ),
+                singleLine = true,
+                leadingIcon = {
+                    IconButton(
+                            modifier = Modifier
+                                    .alpha(ContentAlpha.disabled),
+                            onClick = {  }
+                    ) {
+                        Icon(
+                                imageVector = Icons.Filled.Search,
+                                contentDescription = "Search Icon",
+                                tint = MaterialTheme.colors.topAppBarContentColor
+                        )
+                    }
+                }
+        )
+    }
+}
+
 @Composable
 @Preview
 fun DefaultListAppBarPreview() {
@@ -195,5 +251,16 @@ fun DefaultListAppBarPreview() {
         onSearchClicked = {},
         onSortClicked = {},
         onDeleteClicked = {}
+    )
+}
+
+@Preview
+@Composable
+fun SearchAppBarPreview() {
+    SearchAppBar(
+            text = "",
+            onTextChange = {},
+            onCloseClicked = {},
+            onSearchClicked = {}
     )
 }
