@@ -9,8 +9,11 @@ import androidx.compose.animation.expandHorizontally
 import androidx.compose.animation.expandVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.runtime.Composable
@@ -33,6 +36,7 @@ import androidx.compose.ui.layout.MeasureScope
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.TextUnit
@@ -45,17 +49,17 @@ import kotlinx.coroutines.withContext
 @Composable
 // MAIN
 fun ListAppBar() {
-//    DefaultListAppBar(
-//        onSearchClicked = {},
-//        onSortClicked = {},
-//        onDeleteClicked = {}
-//    )
-    SearchAppBar(
-            text = "",
-            onTextChange = {},
-            onCloseClicked = {},
-            onSearchClicked = {}
+    DefaultListAppBar(
+        onSearchClicked = {},
+        onSortClicked = {},
+        onDeleteClicked = {}
     )
+//    SearchAppBar(
+//            text = "",
+//            onTextChange = {},
+//            onCloseClicked = {},
+//            onSearchClicked = {}
+//    )
 }
 
 @Composable
@@ -177,7 +181,9 @@ fun DeleteAllAction(onDeleteClicked: () -> Unit) {
             contentDescription = stringResource(id = R.string.delete_all_action),
             tint = MaterialTheme.colors.topAppBarContentColor
         )
-        DropdownMenu(expanded = expended, onDismissRequest = { expended = false }) {
+        DropdownMenu(
+            expanded = expended,
+            onDismissRequest = { expended = false }) {
             DropdownMenuItem(
                 onClick = {
                     expended = false
@@ -198,48 +204,77 @@ fun DeleteAllAction(onDeleteClicked: () -> Unit) {
 // MAIN SEARCH APP BAR
 @Composable
 fun SearchAppBar(
-        text: String,
-        onTextChange: (String) -> Unit,
-        onCloseClicked: () -> Unit,
-        onSearchClicked: () -> Unit,
+    text: String,
+    onTextChange: (String) -> Unit,
+    onCloseClicked: () -> Unit,
+    onSearchClicked: (String) -> Unit,
 ) {
-    Surface(modifier = Modifier
+    Surface(
+        modifier = Modifier
             .fillMaxWidth()
             .height(TOP_APP_BAR_HEIGHT),
-            elevation = AppBarDefaults.TopAppBarElevation,
-            color = MaterialTheme.colors.topAppBarBackgroundColor
+        elevation = AppBarDefaults.TopAppBarElevation,
+        color = MaterialTheme.colors.topAppBarBackgroundColor
     ) {
         TextField(
-                value = text,
-                onValueChange = {onTextChange(it)},
-                modifier = Modifier
-                        .fillMaxWidth(),
-                placeholder = {
-                    Text(
-                            modifier = Modifier
-                                    .alpha(ContentAlpha.medium),
-                            text = "Search",
-                            color = Color.White
+            value = text,
+            onValueChange = {onTextChange(it)},
+            modifier = Modifier
+                .fillMaxWidth(),
+            placeholder = {
+                Text(
+                    modifier = Modifier
+                        .alpha(ContentAlpha.medium),
+                    text = "Search",
+                    color = Color.White
+                )
+            },
+            textStyle = TextStyle(
+                color = MaterialTheme.colors.topAppBarContentColor,
+                fontSize = MaterialTheme.typography.subtitle1.fontSize
+            ),
+            singleLine = true,
+            leadingIcon = {
+                IconButton(
+                    modifier = Modifier
+                        .alpha(ContentAlpha.disabled),
+                    onClick = {  }
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.Search,
+                        contentDescription = "Search Icon",
+                        tint = MaterialTheme.colors.topAppBarContentColor
                     )
-                },
-                textStyle = TextStyle(
-                        color = MaterialTheme.colors.topAppBarContentColor,
-                        fontSize = MaterialTheme.typography.subtitle1.fontSize
-                ),
-                singleLine = true,
-                leadingIcon = {
-                    IconButton(
-                            modifier = Modifier
-                                    .alpha(ContentAlpha.disabled),
-                            onClick = {  }
-                    ) {
-                        Icon(
-                                imageVector = Icons.Filled.Search,
-                                contentDescription = "Search Icon",
-                                tint = MaterialTheme.colors.topAppBarContentColor
-                        )
-                    }
                 }
+            },
+            trailingIcon = {
+                IconButton(
+                    onClick = {
+                        onCloseClicked()
+                    }
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.Close,
+                        contentDescription = "Close Icon",
+                        tint = MaterialTheme.colors.topAppBarContentColor
+                    )
+                }
+            },
+            keyboardOptions = KeyboardOptions(
+                imeAction = ImeAction.Search
+            ),
+            keyboardActions = KeyboardActions(
+                onSearch = {
+                    onSearchClicked(text)
+                }
+            ),
+            colors = TextFieldDefaults.textFieldColors(
+                cursorColor = MaterialTheme.colors.topAppBarContentColor,
+                focusedIndicatorColor = Color.Transparent,
+                disabledIndicatorColor = Color.Transparent,
+                unfocusedIndicatorColor = Color.Transparent,
+                backgroundColor = Color.Transparent
+            )
         )
     }
 }
