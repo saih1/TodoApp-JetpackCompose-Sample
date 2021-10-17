@@ -1,5 +1,6 @@
 package com.example.todojetpackcomposemvvm.navigation.destinations
 
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
@@ -10,6 +11,7 @@ import com.example.todojetpackcomposemvvm.util.Constants.LIST_ARGUMENT_KEY
 import com.example.todojetpackcomposemvvm.util.Constants.LIST_SCREEN
 
 // Extension function on NavGraphBuilder
+@ExperimentalMaterialApi
 fun NavGraphBuilder.listComposable(
     navigateToTaskScreen: (Int) -> Unit,
     sharedViewModel: SharedViewModel
