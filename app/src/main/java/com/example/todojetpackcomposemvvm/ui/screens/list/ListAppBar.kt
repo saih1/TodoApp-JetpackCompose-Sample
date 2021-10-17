@@ -1,7 +1,9 @@
 package com.example.todojetpackcomposemvvm.ui.screens.list
 
+import android.content.ContentValues.TAG
 import android.content.Context
 import android.content.res.Resources
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.FiniteAnimationSpec
@@ -45,6 +47,7 @@ import androidx.compose.ui.unit.dp
 import com.example.todojetpackcomposemvvm.components.PriorityItem
 import com.example.todojetpackcomposemvvm.ui.theme.*
 import com.example.todojetpackcomposemvvm.ui.viewmodels.SharedViewModel
+import com.example.todojetpackcomposemvvm.ui.viewmodels.SharedViewModel_Factory
 import com.example.todojetpackcomposemvvm.util.SearchAppBarState
 import com.example.todojetpackcomposemvvm.util.TrailingIconState
 import kotlinx.coroutines.withContext
@@ -61,6 +64,7 @@ fun ListAppBar(
             DefaultListAppBar(
                 onSearchClicked = {
                     sharedViewModel.searchAppBarState.value = SearchAppBarState.OPENED
+                    // More logic to be implemented
                 },
                 onSortClicked = {},
                 onDeleteClicked = {}
@@ -71,6 +75,7 @@ fun ListAppBar(
                 text = searchTextState,
                 onTextChange = { newText ->
                     sharedViewModel.searchTextState.value = newText
+                    println("THE WORD IS: ${sharedViewModel.searchTextState.value}")
                 },
                 onCloseClicked = {
                     sharedViewModel.searchAppBarState.value = SearchAppBarState.CLOSED
@@ -98,7 +103,7 @@ fun DefaultListAppBar(
                 modifier = Modifier.padding(horizontal = 2.dp, vertical = 3.dp)
             )
             Text(
-                text = "Tasks",
+                text = stringResource(id = R.string.list_screen_title),
                 color = MaterialTheme.colors.topAppBarContentColor
             )
         },
@@ -242,14 +247,16 @@ fun SearchAppBar(
     ) {
         TextField(
             value = text,
-            onValueChange = {onTextChange(it)},
+            onValueChange = { text ->
+                onTextChange(text)
+            },
             modifier = Modifier
                 .fillMaxWidth(),
             placeholder = {
                 Text(
                     modifier = Modifier
                         .alpha(ContentAlpha.medium),
-                    text = "Search",
+                    text = stringResource(id = R.string.search_place_holder),
                     color = Color.White
                 )
             },
@@ -262,11 +269,13 @@ fun SearchAppBar(
                 IconButton(
                     modifier = Modifier
                         .alpha(ContentAlpha.disabled),
-                    onClick = {  }
+                    onClick = {
+                        // Logic to be implemented
+                    }
                 ) {
                     Icon(
                         imageVector = Icons.Filled.Search,
-                        contentDescription = "Search Icon",
+                        contentDescription = stringResource(id = R.string.search_icon),
                         tint = MaterialTheme.colors.topAppBarContentColor
                     )
                 }
@@ -292,7 +301,7 @@ fun SearchAppBar(
                 ) {
                     Icon(
                         imageVector = Icons.Filled.Close,
-                        contentDescription = "Close Icon",
+                        contentDescription = stringResource(id = R.string.close_icon),
                         tint = MaterialTheme.colors.topAppBarContentColor
                     )
                 }
