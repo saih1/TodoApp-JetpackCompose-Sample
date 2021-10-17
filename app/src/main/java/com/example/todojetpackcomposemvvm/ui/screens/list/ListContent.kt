@@ -19,20 +19,23 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.example.todojetpackcomposemvvm.data.models.Priority
 import com.example.todojetpackcomposemvvm.data.models.ToDoTask
 import com.example.todojetpackcomposemvvm.ui.theme.*
+import com.example.todojetpackcomposemvvm.util.RequestState
 
 @ExperimentalMaterialApi
 @Composable
 fun ListContent(
-    tasks: List<ToDoTask>,
+    tasks: RequestState<List<ToDoTask>>,
     navigateToTaskScreen: (taskId: Int) -> Unit
 ) {
-    if (tasks.isEmpty()) {
-        EmptyContent()
-    } else {
-        DisplayTasks(
-            tasks = tasks,
-            navigateToTaskScreen = navigateToTaskScreen
-        )
+    if (tasks is RequestState.Success) {
+        if (tasks.data.isEmpty()) {
+            EmptyContent()
+        } else {
+            DisplayTasks(
+                tasks = tasks.data,
+                navigateToTaskScreen = navigateToTaskScreen
+            )
+        }
     }
 }
 
