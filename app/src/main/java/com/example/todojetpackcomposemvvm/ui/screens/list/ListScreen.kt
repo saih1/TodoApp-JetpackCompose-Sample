@@ -39,6 +39,7 @@ fun ListScreen(
                 searchTextState = searchTextState
             )
         },
+        // on change, content will be recomposed
         content = {
                   ListContent(
                       tasks = allTasks,
