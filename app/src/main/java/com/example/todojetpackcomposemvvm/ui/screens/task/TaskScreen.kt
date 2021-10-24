@@ -2,12 +2,20 @@ package com.example.todojetpackcomposemvvm.ui.screens.task
 
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
+import com.example.todojetpackcomposemvvm.data.models.ToDoTask
+import com.example.todojetpackcomposemvvm.util.Action
 
 @Composable
-fun TaskScreen() {
+fun TaskScreen(
+    selectedTask: ToDoTask?,
+    navigateToListScreen: (Action) -> Unit
+) {
     Scaffold(
         topBar = {
-                 // later
+            TaskAppBar(
+                navigateToListScreen = navigateToListScreen,
+                selectedTask = selectedTask
+            )
         },
         content = {}
     )

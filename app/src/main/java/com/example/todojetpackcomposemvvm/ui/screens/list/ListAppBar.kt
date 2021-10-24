@@ -142,7 +142,8 @@ fun SearchAction(
         Icon(
             imageVector = Icons.Filled.Search,
             contentDescription = stringResource(id = R.string.search_action),
-            tint = MaterialTheme.colors.topAppBarContentColor)
+            tint = MaterialTheme.colors.topAppBarContentColor
+        )
     }
 }
 
