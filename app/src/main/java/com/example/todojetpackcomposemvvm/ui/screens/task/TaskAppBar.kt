@@ -23,7 +23,9 @@ fun TaskAppBar(
     navigateToListScreen: (Action) -> Unit
 ) {
     if (selectedTask == null) {
-        NewTaskAppBar(navigateToListScreen = navigateToListScreen)
+        NewTaskAppBar(
+            navigateToListScreen = navigateToListScreen
+        )
     } else {
         ExistingTaskAppBar(
             selectedTask = selectedTask,
@@ -39,7 +41,9 @@ fun NewTaskAppBar(
 ) {
     TopAppBar(
         navigationIcon = {
-            BackAction(onBackClicked = navigateToListScreen)
+            BackAction(
+                onBackClicked = navigateToListScreen
+            )
         },
         title = {
             Text(
@@ -102,7 +106,6 @@ fun ExistingTaskAppBar(
         actions = {
             DeleteAction(onDeleteClicked = navigateToListScreen)
             UpdateAction(onUpdateClicked = navigateToListScreen)
-
         }
     )
 }
@@ -111,7 +114,11 @@ fun ExistingTaskAppBar(
 fun CloseAction(
     onCloseClicked: (Action) -> Unit
 ) {
-    IconButton(onClick = {onCloseClicked(Action.NO_ACTION)}) {
+    IconButton(
+        onClick = {
+            onCloseClicked(Action.NO_ACTION)
+        }
+    ) {
         Icon(
             imageVector = Icons.Filled.Close,
             contentDescription = stringResource(id = R.string.close_icon),
@@ -124,7 +131,11 @@ fun CloseAction(
 fun DeleteAction(
     onDeleteClicked: (Action) -> Unit
 ) {
-    IconButton(onClick = {onDeleteClicked(Action.DELETE)}) {
+    IconButton(
+        onClick = {
+            onDeleteClicked(Action.DELETE)
+        }
+    ) {
         Icon(
             imageVector = Icons.Filled.Delete,
             contentDescription = stringResource(id = R.string.delete_icon),
@@ -137,7 +148,11 @@ fun DeleteAction(
 fun UpdateAction(
     onUpdateClicked: (Action) -> Unit
 ) {
-    IconButton(onClick = {onUpdateClicked(Action.UPDATE)}) {
+    IconButton(
+        onClick = {
+            onUpdateClicked(Action.UPDATE)
+        }
+    ) {
         Icon(
             imageVector = Icons.Filled.Check,
             contentDescription = stringResource(id = R.string.update_icon),
@@ -155,8 +170,14 @@ fun NewTaskAppBarPreview() {
 @Preview
 @Composable
 fun ExistingTaskAppBarPreview() {
+    val prevTask = ToDoTask(
+        0,
+        "Hello Kotlin",
+        "Kotlin is fun",
+        Priority.MEDIUM
+    )
     ExistingTaskAppBar(
-        selectedTask = ToDoTask(0, "Hello Kotlin", "Kotlin is fun", Priority.MEDIUM),
+        selectedTask = prevTask,
         navigateToListScreen = {}
     )
 }
