@@ -27,8 +27,6 @@ fun PriorityItem(priority: Priority) {
     Row(verticalAlignment = Alignment.CenterVertically) {
         Canvas(modifier = Modifier.size(PRIORITY_INDICATOR_SIZE)) {
             drawCircle(color = priority.color)
-//            drawRoundRect(color = priority.color)
-//            drawArc(color = priority.color, startAngle = 25F, sweepAngle = 310F, useCenter = true, alpha = 1F)
         }
         Text(
             modifier = Modifier.padding(start = LARGE_PADDING),

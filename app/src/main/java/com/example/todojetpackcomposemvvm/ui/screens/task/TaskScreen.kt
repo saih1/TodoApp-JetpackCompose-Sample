@@ -17,6 +17,8 @@ fun TaskScreen(
                 selectedTask = selectedTask
             )
         },
-        content = {}
+        content = {
+
+        }
     )
 }
