@@ -1,6 +1,7 @@
 package com.example.todojetpackcomposemvvm.navigation.destinations
 
 import android.util.Log
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.navigation.NavGraphBuilder
@@ -21,7 +22,7 @@ fun NavGraphBuilder.taskComposable(
     composable(
         route = Constants.TASK_SCREEN,
         arguments = listOf(
-            navArgument(Constants.TASK_ARGUMENT_KEY) {
+            navArgument(TASK_ARGUMENT_KEY) {
                 type = NavType.IntType
             }
         )
@@ -30,9 +31,18 @@ fun NavGraphBuilder.taskComposable(
         sharedViewModel.getSelectedTask(taskId = taskId)
         val selectedTask by sharedViewModel.selectedTask.collectAsState()
 
+        // Only when "selectedTask" changes, code inside LaunchedEffect will be executed.
+        LaunchedEffect(key1 = selectedTask) {
+            if (selectedTask != null || taskId == -1) {
+                sharedViewModel.updateTaskFields(selectedTask = selectedTask)
+            }
+            Log.e("SELECTED TASK", "Selected Task: $taskId ${selectedTask.toString()}")
+        }
+
         TaskScreen(
             selectedTask = selectedTask,
-            navigateToListScreen = navigateToListScreen
+            navigateToListScreen = navigateToListScreen,
+            sharedViewModel = sharedViewModel
         )
     }
 }

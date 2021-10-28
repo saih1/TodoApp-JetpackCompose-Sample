@@ -4,8 +4,10 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.todojetpackcomposemvvm.data.models.Priority
 import com.example.todojetpackcomposemvvm.data.models.ToDoTask
 import com.example.todojetpackcomposemvvm.data.repositories.TodoRepository
+import com.example.todojetpackcomposemvvm.util.Constants.MAX_TITLE_LENGTH
 import com.example.todojetpackcomposemvvm.util.RequestState
 import com.example.todojetpackcomposemvvm.util.SearchAppBarState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -18,16 +20,22 @@ import javax.inject.Inject
 @HiltViewModel
 class SharedViewModel @Inject constructor(private val repository: TodoRepository) : ViewModel() {
 
+    val id: MutableState<Int> = mutableStateOf(0)
+    val title: MutableState<String> = mutableStateOf("")
+    val description: MutableState<String> = mutableStateOf("")
+    val priority: MutableState<Priority> = mutableStateOf(Priority.LOW)
+
     val searchAppBarState: MutableState<SearchAppBarState> =
         mutableStateOf(SearchAppBarState.CLOSED)
 
     val searchTextState: MutableState<String> =
         mutableStateOf("")
 
+    // GETTING ALL TASKS
     private val _allTasks =
         MutableStateFlow<RequestState<List<ToDoTask>>>(RequestState.Idle)
 
-    val allTasks: MutableStateFlow<RequestState<List<ToDoTask>>> = _allTasks
+    val allTasks: StateFlow<RequestState<List<ToDoTask>>> = _allTasks
 
     fun getAllTasks() {
         _allTasks.value = RequestState.Loading
@@ -48,8 +56,32 @@ class SharedViewModel @Inject constructor(private val repository: TodoRepository
 
     fun getSelectedTask(taskId: Int) {
         viewModelScope.launch {
-            repository.getSelectedTask(taskId).collect { task ->
+            repository.getSelectedTask(taskId = taskId).collect { task ->
                 _selectedTask.value = task}
         }
+    }
+
+    fun updateTaskFields(selectedTask: ToDoTask?) {
+        if (selectedTask != null) {
+            id.value = selectedTask.id
+            title.value = selectedTask.title
+            description.value = selectedTask.description
+            priority.value = selectedTask.priority
+        } else {
+            id.value = 0
+            title.value = ""
+            description.value = ""
+            priority.value = Priority.LOW
+        }
+    }
+
+    fun updateTitle(newTitle: String) {
+        if (newTitle.length < MAX_TITLE_LENGTH) {
+            title.value = newTitle
+        }
+    }
+
+    fun validateFields(): Boolean {
+        return title.value.isNotEmpty() && description.value.isNotEmpty()
     }
 }

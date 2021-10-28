@@ -67,7 +67,7 @@ fun TaskContentPreview() {
         onTitleChange = {},
         description = "",
         onDescriptionChange = {},
-        priority = Priority.LOW,
+        priority = Priority.HIGH,
         onPrioritySelected = {}
     )
 }
