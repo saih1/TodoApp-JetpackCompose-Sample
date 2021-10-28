@@ -7,10 +7,12 @@ import androidx.lifecycle.viewModelScope
 import com.example.todojetpackcomposemvvm.data.models.Priority
 import com.example.todojetpackcomposemvvm.data.models.ToDoTask
 import com.example.todojetpackcomposemvvm.data.repositories.TodoRepository
+import com.example.todojetpackcomposemvvm.util.Action
 import com.example.todojetpackcomposemvvm.util.Constants.MAX_TITLE_LENGTH
 import com.example.todojetpackcomposemvvm.util.RequestState
 import com.example.todojetpackcomposemvvm.util.SearchAppBarState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collect
@@ -19,6 +21,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SharedViewModel @Inject constructor(private val repository: TodoRepository) : ViewModel() {
+
+    val action: MutableState<Action> = mutableStateOf(Action.NO_ACTION)
 
     val id: MutableState<Int> = mutableStateOf(0)
     val title: MutableState<String> = mutableStateOf("")
@@ -49,6 +53,56 @@ class SharedViewModel @Inject constructor(private val repository: TodoRepository
         } catch (e: Exception) {
             _allTasks.value = RequestState.Error(error = e)
         }
+    }
+
+    private fun addTask() {
+        viewModelScope.launch(Dispatchers.IO) {
+            val toDoTask = ToDoTask(
+                title = title.value,
+                description = description.value,
+                priority = priority.value
+            )
+            repository.addTask(toDoTask = toDoTask)
+            println(toDoTask.toString())
+        }
+    }
+
+    // Experiment
+    private fun deleteTask() {
+        viewModelScope.launch(Dispatchers.IO) {
+            val toDoTask = ToDoTask(
+                title = title.value,
+                description = description.value,
+                priority = priority.value,
+                id = id.value
+            )
+            repository.deleteTask(toDoTask = toDoTask)
+            println(toDoTask.toString())
+        }
+    }
+
+    fun handleDatabaseActions(action: Action) {
+        when (action) {
+            Action.ADD -> {
+                addTask()
+            }
+            Action.UPDATE -> {
+
+            }
+            Action.DELETE -> {
+                deleteTask()
+            }
+            Action.DELETE_ALL -> {
+
+            }
+            Action.UNDO -> {
+
+            }
+            else -> {
+
+            }
+        }
+        this.action.value = Action.NO_ACTION
     }
 
     private val _selectedTask: MutableStateFlow<ToDoTask?> = MutableStateFlow(null)
