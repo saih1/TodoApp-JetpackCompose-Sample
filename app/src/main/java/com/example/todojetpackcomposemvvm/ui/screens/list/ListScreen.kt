@@ -10,7 +10,9 @@ import androidx.compose.ui.res.stringResource
 import com.example.todojetpackcomposemvvm.R
 import com.example.todojetpackcomposemvvm.ui.theme.fabBackgroundColor
 import com.example.todojetpackcomposemvvm.ui.viewmodels.SharedViewModel
+import com.example.todojetpackcomposemvvm.util.Action
 import com.example.todojetpackcomposemvvm.util.SearchAppBarState
+import kotlinx.coroutines.launch
 
 @ExperimentalMaterialApi
 @Composable
@@ -29,9 +31,19 @@ fun ListScreen(
     val searchAppBarState: SearchAppBarState by sharedViewModel.searchAppBarState
     val searchTextState: String by sharedViewModel.searchTextState
 
-    sharedViewModel.handleDatabaseActions(action = action)
+    val scaffoldState = rememberScaffoldState()
+
+    DisplaySnackBar(
+        scaffoldState = scaffoldState,
+        handleDatabaseAction = {
+            sharedViewModel.handleDatabaseActions(action = action)
+        },
+        taskTitle = sharedViewModel.title.value,
+        action = action
+    )
 
     Scaffold(
+        scaffoldState = scaffoldState,
         topBar = {
             ListAppBar(
                 sharedViewModel = sharedViewModel,
@@ -65,5 +77,27 @@ fun ListFab(onFabClicked: (taskId: Int) -> Unit) {
             contentDescription = stringResource(id = R.string.add_button),
             tint = Color.White
         )
+    }
+}
+
+@Composable
+fun DisplaySnackBar(
+    scaffoldState: ScaffoldState,
+    handleDatabaseAction: () -> Unit,
+    taskTitle: String,
+    action: Action
+) {
+    handleDatabaseAction()
+
+    val scope = rememberCoroutineScope()
+    LaunchedEffect(key1 = action) {
+        if (action != Action.NO_ACTION) {
+            scope.launch {
+                val snackBarResult = scaffoldState.snackbarHostState.showSnackbar(
+                    message = "${action.name}: $taskTitle",
+                    actionLabel = "OK"
+                )
+            }
+        }
     }
 }
