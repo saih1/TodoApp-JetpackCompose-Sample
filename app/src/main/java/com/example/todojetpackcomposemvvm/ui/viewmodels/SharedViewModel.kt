@@ -45,7 +45,7 @@ class SharedViewModel @Inject constructor(private val repository: TodoRepository
         _allTasks.value = RequestState.Loading
         try {
             viewModelScope.launch {
-                repository.getAllTasks.collect {
+                repository.getAllTasks().collect {
                     _allTasks.value = RequestState.Success(it)
                 }
             }
@@ -78,7 +78,6 @@ class SharedViewModel @Inject constructor(private val repository: TodoRepository
         }
     }
 
-    // Experiment
     private fun deleteTask() {
         viewModelScope.launch(Dispatchers.IO) {
             val toDoTask = ToDoTask(
@@ -88,7 +87,6 @@ class SharedViewModel @Inject constructor(private val repository: TodoRepository
                 priority = priority.value
             )
             repository.deleteTask(toDoTask = toDoTask)
-            println(toDoTask.toString())
         }
     }
 
@@ -107,7 +105,7 @@ class SharedViewModel @Inject constructor(private val repository: TodoRepository
 
             }
             Action.UNDO -> {
-
+                addTask()
             }
             else -> {
 

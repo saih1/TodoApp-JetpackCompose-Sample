@@ -1,6 +1,5 @@
 package com.example.todojetpackcomposemvvm.ui.screens.list
 
-import android.util.Log
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -37,6 +36,9 @@ fun ListScreen(
         scaffoldState = scaffoldState,
         handleDatabaseAction = {
             sharedViewModel.handleDatabaseActions(action = action)
+        },
+        onUndoClicked = {
+            sharedViewModel.action.value = it
         },
         taskTitle = sharedViewModel.title.value,
         action = action
@@ -84,6 +86,7 @@ fun ListFab(onFabClicked: (taskId: Int) -> Unit) {
 fun DisplaySnackBar(
     scaffoldState: ScaffoldState,
     handleDatabaseAction: () -> Unit,
+    onUndoClicked: (Action) -> Unit,
     taskTitle: String,
     action: Action
 ) {
@@ -95,9 +98,32 @@ fun DisplaySnackBar(
             scope.launch {
                 val snackBarResult = scaffoldState.snackbarHostState.showSnackbar(
                     message = "${action.name}: $taskTitle",
-                    actionLabel = "OK"
+                    actionLabel = setActionLabel(action = action)
+                )
+                undoDeletedTask(
+                    action = action,
+                    snackBarResult = snackBarResult,
+                    onUndoClicked = onUndoClicked
                 )
             }
         }
+    }
+}
+
+private fun setActionLabel(action: Action): String {
+    return if (action.name == "DELETE") {
+        "UNDO"
+    } else {
+        "OK"
+    }
+}
+
+private fun undoDeletedTask(
+    action: Action,
+    snackBarResult: SnackbarResult,
+    onUndoClicked: (Action) -> Unit,
+) {
+    if (snackBarResult == SnackbarResult.ActionPerformed && action == Action.DELETE) {
+        onUndoClicked(Action.UNDO)
     }
 }
