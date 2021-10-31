@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.todojetpackcomposemvvm.data.models.Priority
 import com.example.todojetpackcomposemvvm.data.models.ToDoTask
+import com.example.todojetpackcomposemvvm.data.repositories.DataStoreRepository
 import com.example.todojetpackcomposemvvm.data.repositories.TodoRepository
 import com.example.todojetpackcomposemvvm.util.Action
 import com.example.todojetpackcomposemvvm.util.Constants.MAX_TITLE_LENGTH
@@ -20,7 +21,10 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class SharedViewModel @Inject constructor(private val repository: TodoRepository) : ViewModel() {
+class SharedViewModel @Inject constructor(
+    private val repository: TodoRepository,
+    private val dataStoreRepository: DataStoreRepository
+    ) : ViewModel() {
 
     val action: MutableState<Action> = mutableStateOf(Action.NO_ACTION)
 
@@ -34,6 +38,28 @@ class SharedViewModel @Inject constructor(private val repository: TodoRepository
 
     val searchTextState: MutableState<String> =
         mutableStateOf("")
+
+    private val _searchedTasks =
+        MutableStateFlow<RequestState<List<ToDoTask>>>(RequestState.Idle)
+
+    val searchedTasks: StateFlow<RequestState<List<ToDoTask>>> = _searchedTasks
+
+    fun searchDatabase(
+        searchQuery: String
+    ) {
+        _searchedTasks.value = RequestState.Loading
+        try {
+            viewModelScope.launch {
+                repository.searchDatabase(searchQuery = "%$searchQuery%")
+                    .collect { searchedTasks ->
+                        _searchedTasks.value = RequestState.Success(searchedTasks)
+                    }
+            }
+        } catch (e: Exception) {
+            _searchedTasks.value = RequestState.Error(error = e)
+        }
+        searchAppBarState.value = SearchAppBarState.TRIGGERED
+    }
 
     // GETTING ALL TASKS
     private val _allTasks =
@@ -64,6 +90,7 @@ class SharedViewModel @Inject constructor(private val repository: TodoRepository
             )
             repository.addTask(toDoTask = toDoTask)
         }
+        searchAppBarState.value = SearchAppBarState.CLOSED
     }
 
     private fun updateTask() {
@@ -90,6 +117,12 @@ class SharedViewModel @Inject constructor(private val repository: TodoRepository
         }
     }
 
+    private fun deleteAllTasks() {
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.deleteAllTasks()
+        }
+    }
+
     fun handleDatabaseActions(action: Action) {
         when (action) {
             Action.ADD -> {
@@ -102,7 +135,7 @@ class SharedViewModel @Inject constructor(private val repository: TodoRepository
                 deleteTask()
             }
             Action.DELETE_ALL -> {
-
+                deleteAllTasks()
             }
             Action.UNDO -> {
                 addTask()

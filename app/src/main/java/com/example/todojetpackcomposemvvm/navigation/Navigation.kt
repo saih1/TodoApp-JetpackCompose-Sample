@@ -16,10 +16,7 @@ fun SetupNavigation(
     navController: NavHostController,
     sharedViewModel: SharedViewModel
 ) {
-    // save backstack
-    val screen = remember(navController) {
-        Screens(navController = navController)
-    }
+    val screen = Screens(navController = navController)
 
     NavHost(navController = navController, startDestination = LIST_SCREEN) {
         listComposable(navigateToTaskScreen = screen.task, sharedViewModel = sharedViewModel)

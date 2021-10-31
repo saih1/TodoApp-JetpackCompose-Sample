@@ -1,10 +1,13 @@
 package com.example.todojetpackcomposemvvm.ui.screens.task
 
 import android.content.Context
+import android.util.Log
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
+import androidx.activity.OnBackPressedDispatcher
+import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.compose.material.Scaffold
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.platform.LocalContext
 import com.example.todojetpackcomposemvvm.data.models.Priority
 import com.example.todojetpackcomposemvvm.data.models.ToDoTask
@@ -24,6 +27,8 @@ fun TaskScreen(
     // change in value will notified TaskContent(). (Recompose with new values)
 
     val context = LocalContext.current
+    
+    BackHandler(onBackPressed = { navigateToListScreen(Action.NO_ACTION) })
 
     Scaffold(
         topBar = {
@@ -67,4 +72,31 @@ fun displayToast(context: Context) {
         "Fields Empty.",
         Toast.LENGTH_SHORT
     ).show()
+}
+
+// To handle back press
+@Composable
+fun BackHandler(
+    backDispatcher: OnBackPressedDispatcher? =
+        LocalOnBackPressedDispatcherOwner.current?.onBackPressedDispatcher,
+    onBackPressed: () -> Unit
+) {
+    val currentOnBackPressed by rememberUpdatedState(newValue = onBackPressed)
+
+    val backCallBack = remember {
+        object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                currentOnBackPressed()
+                Log.d("BACK HANDLER", "Triggered!")
+            }
+        }
+    }
+    
+    DisposableEffect(key1 = backDispatcher) {
+        backDispatcher?.addCallback(backCallBack)
+
+        onDispose {
+            backCallBack.remove()
+        }
+    }
 }

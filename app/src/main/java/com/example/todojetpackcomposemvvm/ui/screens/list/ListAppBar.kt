@@ -1,15 +1,5 @@
 package com.example.todojetpackcomposemvvm.ui.screens.list
 
-import android.content.ContentValues.TAG
-import android.content.Context
-import android.content.res.Resources
-import android.util.Log
-import android.widget.Toast
-import androidx.compose.animation.animateContentSize
-import androidx.compose.animation.core.FiniteAnimationSpec
-import androidx.compose.animation.expandHorizontally
-import androidx.compose.animation.expandVertically
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -28,29 +18,19 @@ import com.example.todojetpackcomposemvvm.R
 import com.example.todojetpackcomposemvvm.data.models.Priority
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.layout.MeasureScope
-import androidx.compose.ui.layout.layout
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.Constraints
-import androidx.compose.ui.unit.TextUnit
-import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
+import com.example.todojetpackcomposemvvm.components.DisplayAlertDialog
 import com.example.todojetpackcomposemvvm.components.PriorityItem
 import com.example.todojetpackcomposemvvm.ui.theme.*
 import com.example.todojetpackcomposemvvm.ui.viewmodels.SharedViewModel
-import com.example.todojetpackcomposemvvm.ui.viewmodels.SharedViewModel_Factory
+import com.example.todojetpackcomposemvvm.util.Action
 import com.example.todojetpackcomposemvvm.util.SearchAppBarState
 import com.example.todojetpackcomposemvvm.util.TrailingIconState
-import kotlinx.coroutines.withContext
 
 @Composable
 // MAIN
@@ -67,7 +47,9 @@ fun ListAppBar(
                     // More logic to be implemented
                 },
                 onSortClicked = {},
-                onDeleteClicked = {}
+                onDeleteAllConfirmed = {
+                    sharedViewModel.action.value = Action.DELETE_ALL
+                }
             )
         }
         else -> {
@@ -75,13 +57,14 @@ fun ListAppBar(
                 text = searchTextState,
                 onTextChange = { newText ->
                     sharedViewModel.searchTextState.value = newText
-                    println("THE WORD IS: ${sharedViewModel.searchTextState.value}")
                 },
                 onCloseClicked = {
                     sharedViewModel.searchAppBarState.value = SearchAppBarState.CLOSED
                     sharedViewModel.searchTextState.value = ""
                 },
-                onSearchClicked = {}
+                onSearchClicked = {
+                    sharedViewModel.searchDatabase(searchQuery = it)
+                }
             )
         }
     }
@@ -92,7 +75,7 @@ fun ListAppBar(
 fun DefaultListAppBar(
     onSearchClicked: () -> Unit,
     onSortClicked: (Priority) -> Unit,
-    onDeleteClicked: () -> Unit
+    onDeleteAllConfirmed: () -> Unit
 ) {
     TopAppBar(
         title = {
@@ -112,25 +95,33 @@ fun DefaultListAppBar(
             ListAppBarActions(
                 onSearchClicked = onSearchClicked,
                 onSortClicked = onSortClicked,
-                onDeleteClicked = onDeleteClicked
+                onDeleteAllConfirmed = onDeleteAllConfirmed
             )
         }
     )
 }
 
 @Composable
-// ListAppBar Actions to be defined inside DefaultListAppBar()
 fun ListAppBarActions(
     onSearchClicked: () -> Unit,
     onSortClicked: (Priority) -> Unit,
-    onDeleteClicked: () -> Unit
+    onDeleteAllConfirmed: () -> Unit
 ) {
-    // 3 different actions
-    // Order matters
+    var openDialog by remember { mutableStateOf(false) }
+
+    DisplayAlertDialog(
+        title = stringResource(id = R.string.delete_all_tasks),
+        message = stringResource(id = R.string.delete_all_tasks_confirmation
+        ),
+        openDialog = openDialog,
+        closeDialog = { openDialog = false },
+        onYesClicked = { onDeleteAllConfirmed() }
+    )
+
     Row {
         SearchAction(onSearchClicked = onSearchClicked)
         SortAction(onSortClicked = onSortClicked)
-        DeleteAllAction(onDeleteClicked = onDeleteClicked)
+        DeleteAllAction(onDeleteAllConfirmed = { openDialog = true })
     }
 }
 
@@ -195,7 +186,9 @@ fun SortAction(onSortClicked: (Priority) -> Unit) {
 }
 
 @Composable
-fun DeleteAllAction(onDeleteClicked: () -> Unit) {
+fun DeleteAllAction(
+    onDeleteAllConfirmed: () -> Unit
+) {
     var expended by remember {
         mutableStateOf(false)
     }
@@ -213,7 +206,7 @@ fun DeleteAllAction(onDeleteClicked: () -> Unit) {
             DropdownMenuItem(
                 onClick = {
                     expended = false
-                    onDeleteClicked()
+                    onDeleteAllConfirmed()
                 }
             ) {
                 Text(
@@ -332,7 +325,7 @@ fun DefaultListAppBarPreview() {
     DefaultListAppBar(
         onSearchClicked = {},
         onSortClicked = {},
-        onDeleteClicked = {}
+        onDeleteAllConfirmed = {}
     )
 }
 
