@@ -1,5 +1,7 @@
 package com.example.todojetpackcomposemvvm.ui.screens.list
 
+import android.util.Log
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -12,19 +14,21 @@ import com.example.todojetpackcomposemvvm.ui.viewmodels.SharedViewModel
 import com.example.todojetpackcomposemvvm.util.Action
 import com.example.todojetpackcomposemvvm.util.SearchAppBarState
 import kotlinx.coroutines.launch
+import kotlin.math.log
 
+@ExperimentalAnimationApi
 @ExperimentalMaterialApi
 @Composable
 fun ListScreen(
+    action: Action,
     navigateToTaskScreen: (taskId: Int) -> Unit,
     sharedViewModel: SharedViewModel
 ) {
-    LaunchedEffect(key1 = true) {
-        sharedViewModel.getAllTasks()
-        sharedViewModel.readSortState()
+    LaunchedEffect(key1 = action) {
+        sharedViewModel.handleDatabaseActions(action = action)
     }
 
-    val action by sharedViewModel.action
+//    val action by sharedViewModel.action
 
     val allTasks by sharedViewModel.allTasks.collectAsState()
 
@@ -39,10 +43,11 @@ fun ListScreen(
 
     val scaffoldState = rememberScaffoldState()
 
+
     DisplaySnackBar(
         scaffoldState = scaffoldState,
-        handleDatabaseAction = {
-            sharedViewModel.handleDatabaseActions(action = action)
+        onComplete = {
+            sharedViewModel.action.value = it
         },
         onUndoClicked = {
             sharedViewModel.action.value = it
@@ -73,6 +78,8 @@ fun ListScreen(
                       onSwipeToDelete = { action, task ->
                           sharedViewModel.action.value = action
                           sharedViewModel.updateTaskFields(selectedTask = task)
+                          // to make alert disappear when delete tasks sequentially
+                          scaffoldState.snackbarHostState.currentSnackbarData?.dismiss()
                       }
                   )
         },
@@ -101,13 +108,11 @@ fun ListFab(onFabClicked: (taskId: Int) -> Unit) {
 @Composable
 fun DisplaySnackBar(
     scaffoldState: ScaffoldState,
-    handleDatabaseAction: () -> Unit,
+    onComplete: (Action) -> Unit,
     onUndoClicked: (Action) -> Unit,
     taskTitle: String,
-    action: Action
+    action: Action,
 ) {
-    handleDatabaseAction()
-
     val scope = rememberCoroutineScope()
     LaunchedEffect(key1 = action) {
         if (action != Action.NO_ACTION) {
@@ -125,6 +130,7 @@ fun DisplaySnackBar(
                     onUndoClicked = onUndoClicked
                 )
             }
+            onComplete(Action.NO_ACTION)
         }
     }
 }
