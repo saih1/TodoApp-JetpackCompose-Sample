@@ -5,6 +5,14 @@ plugins {
     id 'dagger.hilt.android.plugin'
 }
 
+allprojects {
+    configurations.all {
+        resolutionStrategy {
+            force 'org.xerial:sqlite-jdbc:3.34.0'
+        }
+    }
+}
+
 android {
     compileSdk 31
 
