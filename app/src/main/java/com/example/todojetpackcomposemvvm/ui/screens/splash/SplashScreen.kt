@@ -17,6 +17,7 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.example.todojetpackcomposemvvm.R
 import com.example.todojetpackcomposemvvm.ui.theme.LOGO_HEIGHT
@@ -51,7 +52,15 @@ fun SplashScreen(
         delay(SPLASH_DELAY)
         navigateToListScreen()
     }
+    
+    Splash(offSetState = offSetState, alphaState = alphaState)
+}
 
+@Composable
+fun Splash(
+    offSetState: Dp,
+    alphaState: Float
+) {
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -74,13 +83,5 @@ fun SplashScreen(
 @Preview
 @Composable
 fun SplashScreenPreview() {
-    SplashScreen(navigateToListScreen = {})
-}
-
-@Preview
-@Composable
-fun SplashScreenPreviewDark() {
-    TodoJetpackComposeMVVMTheme(darkTheme = true) {
-        SplashScreen(navigateToListScreen = {})
-    }
+    Splash(offSetState = 0.dp, alphaState = 1f)
 }
