@@ -1,6 +1,7 @@
 package com.example.todojetpackcomposemvvm.navigation.destinations
 
 import android.util.Log
+import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInHorizontally
@@ -30,15 +31,9 @@ fun NavGraphBuilder.taskComposable(
                 type = NavType.IntType
             }
         ),
-        enterTransition = { _, _ ->
-            slideInHorizontally(
-                initialOffsetX = { fullWidth -> -fullWidth },
-                animationSpec = tween(
-                    durationMillis = 300
-                )
-            )
+        enterTransition = {
+            slideInHorizontally(animationSpec = tween(300))
         }
-
     ) { navBackStackEntry ->
         val taskId = navBackStackEntry.arguments!!.getInt(TASK_ARGUMENT_KEY)
         LaunchedEffect(key1 = taskId) {

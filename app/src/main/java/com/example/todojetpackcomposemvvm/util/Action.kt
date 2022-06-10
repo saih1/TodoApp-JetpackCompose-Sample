@@ -1,7 +1,5 @@
 package com.example.todojetpackcomposemvvm.util
 
-import java.lang.Exception
-
 enum class Action {
     ADD,
     UPDATE,
@@ -13,7 +11,7 @@ enum class Action {
 
 // Convert String to Action
 fun String?.toAction(): Action {
-    return if(this.isNullOrEmpty())
+    return if (this.isNullOrEmpty())
         Action.NO_ACTION
     else
         Action.valueOf(this)

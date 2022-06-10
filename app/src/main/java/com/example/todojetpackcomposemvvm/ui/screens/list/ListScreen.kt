@@ -1,6 +1,5 @@
 package com.example.todojetpackcomposemvvm.ui.screens.list
 
-import android.util.Log
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -9,12 +8,13 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import com.example.todojetpackcomposemvvm.R
+import com.example.todojetpackcomposemvvm.data.models.ToDoTask
 import com.example.todojetpackcomposemvvm.ui.theme.fabBackgroundColor
 import com.example.todojetpackcomposemvvm.ui.viewmodels.SharedViewModel
 import com.example.todojetpackcomposemvvm.util.Action
+import com.example.todojetpackcomposemvvm.util.RequestState
 import com.example.todojetpackcomposemvvm.util.SearchAppBarState
 import kotlinx.coroutines.launch
-import kotlin.math.log
 
 @ExperimentalAnimationApi
 @ExperimentalMaterialApi
@@ -30,7 +30,7 @@ fun ListScreen(
 
 //    val action by sharedViewModel.action
 
-    val allTasks by sharedViewModel.allTasks.collectAsState()
+    val allTasks: RequestState<List<ToDoTask>> by sharedViewModel.allTasks.collectAsState()
 
     val searchTasks by sharedViewModel.searchedTasks.collectAsState()
 

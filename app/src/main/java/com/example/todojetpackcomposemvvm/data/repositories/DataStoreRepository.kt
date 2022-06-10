@@ -28,7 +28,7 @@ class DataStoreRepository @Inject constructor(
         val sortKey = stringPreferencesKey(name = PREFERENCE_KEY)
     }
 
-    private val dataStore = context.dataStore
+    private val dataStore: DataStore<Preferences> = context.dataStore
 
     suspend fun persistSortState(priority: Priority) {
         dataStore.edit { preference ->
